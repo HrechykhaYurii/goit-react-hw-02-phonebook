@@ -16,6 +16,7 @@ code {
     monospace;
 }
 p,
+h1,
 h2,
 ul {
   margin: 0;

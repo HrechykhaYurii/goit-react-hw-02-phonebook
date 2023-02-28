@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { GlobalStyle } from "./GlobalStyles";
 import { Layout } from "./Layout";
+import { ContactForm } from "./ContactForm/ContactForm";
+import { ContactList } from "./ContactList/ContactList";
+import { Filter } from "./Filter/Filter";
 
 export class App extends Component {
   state = {
@@ -12,17 +15,42 @@ export class App extends Component {
     ],
     filter: '',
   };
-  
-  
 
-  render() {
+   handlerSubmit = newContact => {
+    this.setState(({ contacts }) =>
+      contacts.find(contact => contact.name === newContact.name)
+        ? alert(`${newContact.name} is already in contacts`)
+        : { contacts: [newContact , ...contacts] }
+    );
+  };
+
+   deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
+  };
+
+  onFilter = e => {
+    const { value } = e.currentTarget;
+    this.setState({ filter: value });
+  };
     
 
+  render() {
+
+    const { contacts, filter } = this.state;
+    const filteredContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
+    );
+    
     return(
       <Layout>
         <GlobalStyle />
         <h1>Phonebook</h1>
+        <ContactForm onSubmit={this.handlerSubmit} />
         <h2>Contacts</h2>
+        <Filter value={filter} onFilter={this.onFilter} />
+        <ContactList deleteContact={this.deleteContact} contacts={filteredContacts} />
       </Layout>
    );
 }
